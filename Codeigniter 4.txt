@@ -1,0 +1,129 @@
+[*] Install Codeigniter 4.x
+	- Install Composer Pada OS
+	- Install Xampp
+	- Setting php.ini (hapus ; pada [;extension=intl] )
+	- Buka Terminal
+	- composer create-project codeigniter4/appstarter project-root Atau composer create-project codeigniter4/appstarter --no-dev
+	- Untuk Menjalankan Server Pada Codeigniter : php spark serve
+
+[*] Configurasi Folder Codeigniter 4.x
+	- App : Tempat Ngoding
+	- Public : Tempat Untuk Assets
+	- Vendor : Tempat Aplikasi Composer
+	- Writable : Tempat Cache Dan Lain
+	- .gitignore : Untuk Settingan Github(Yang Tidak Ke Upload Ke Git Hub)
+
+[*] Setting Codeigniter 4.x
+	- Ubah File env Menjadi .env (Setingan Yang Akan Menimpa Settingan Di Folder App/Config)
+	- Didalam file .env
+		[
+			* Tanda # Itu Artinya Disable
+			* Hapus Tanda #, CI_ENVIRENMENT : development (development [error tidak disembunyikan], testing, production [error disembunyikan])
+			* Hapus Tanda #, Sesuaikan app.BaseURL
+		]
+
+[*] Route Dan Controller Codeigniter 4.x
+	- Buka Folder App/Config/ , File Routes.php
+	- Kalau Tidak Menggunakan Routes Urlnya = base_url/controller/function
+	- Kalau Mau Mengisikan Tambah Di Bawah "Route Definitions"
+	- Deklarasi $route->get('/','Home::Index')
+		[
+			* $route : Variabel Bawaan
+			* get : Methode Akses
+			* / : Url Yang Diakses
+			* Home : Controller
+			* Index : Function Didalam Controller 
+		]
+	- Deklarasi $route->get('/about/(:any)/(:num)','Home::about/$1/$2')
+		[
+			* (:any) : Parameter Pertama
+			* (:num) : Parameter Kedua
+		]
+	- Deklarasi Variabel Di BaseController Untuk Semua Extend Data (Letakan Pada BaseController Di Function initController)
+		[
+			* Deklarasi : $this->nama = "Bambang"
+			* Pemanggilan : $this->nama
+		]
+	- Jika Kita Memasukan Controller Pada Folder Maka Yang Perlu Di Edit Adalah NAMESPACE \App\controller\admin (contoh) dan gunakan Use App\controller\BaseController (Contoh)
+
+[*] View
+	- Aturan View Gunakan Nama Controller Untuk Folder View
+	- Memanggil Satu View -> return view('nama_view');
+	- Memanggil Banyak View Biasanya Untuk Template
+		[
+			* echo view('nama_view');
+			* echo view('nama_view');
+			* echo view('nama_view');
+		]
+	- Memanggil Data Dari Controller Ke View
+		[
+			* $data = [
+				nama => 'Bambang',
+			  ]
+			* echo view('nama_view',$data)
+			* Cara Menampilkan Di View echo $nama
+		]
+	- Gunakan base_url() Untuk Menglinkan
+	- d() Aliasnya vardump()
+	- dd() Aliasnya vardum() die()
+
+[*] Layout
+	- Didalam Template $this->renderSection('content')
+	- Didalam File Kontennya
+		[
+			* Diatas Tambahkan $this->extend('layout/template')
+			* Bungkus Kontennya Dengan $this->section('content') Diakhiri $this->endSection() 
+		]
+	- Include Header Dan Footer Pada Lokasi Tertentu, $this->include('layout/navbar')
+
+[*] Model
+	- Settingan Di ENV
+		[
+			* Hapus # Pada Database Pertama
+			* database.default.hostname = localhost // 127.0.0.1
+			* database.default.database = ci4
+			* database.default.username = root
+			* database.default.password =
+			* database.default.DBDriver = MySQLi
+		]
+	- Buat File Mode Dengan Ketentuan
+		[
+			* namespace App\Models
+			* use CodeIgniter\Model
+			* class .... extends Model{}
+			* Isi class dengan protected $table = ''
+			* Isi class dengan protected $useTimestamps = true
+		]
+	- Koneksi Database Tanpa Model
+		[
+			* $db 		= \Config\Database::connect()
+			* $komik 	= $db->query("SELECT * FROM komik")
+			* dd($komik)
+		]
+	- Koneksi Dengan Model
+		[
+			* use App\Models\komikModel
+			* $komikModel = new KomikModel()
+			* $komik = $komikModel->findAll()
+			* dd($komik)
+		]
+	- Koneksi Dengan Model Menggunakan Konstruktor
+		[
+			* use App\Models\komikModel
+			* protected $komikModel
+			* public function __construct(){$this->komikModel = new komikModel()}
+			* $komik = $this->komikModel->findAll()
+			* dd($komik)	
+		]
+	- Mengambil Data Dengan Function Di Model
+		[
+			* public function getKomik($slug = false)
+			* {
+			*	if($slug == false)
+			*	{
+			*		return $this->findAll()
+			*	}
+			* 	return $this->where(['slug' => $slug])->first()
+			* }
+			* Data Diambil Dengan Cara $this->komikModel->getKomik() Atau $this->komikModel->getKomik('naruto')
+		]
